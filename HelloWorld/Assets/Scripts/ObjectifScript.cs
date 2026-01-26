@@ -20,6 +20,7 @@ public class ObjectifScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (attente && timer < tempsAttendre)
         {
             timer += Time.deltaTime;
@@ -38,4 +39,5 @@ public class ObjectifScript : MonoBehaviour
         attente=true;
         rb.linearVelocity = Vector3.zero;
     }
+
 }

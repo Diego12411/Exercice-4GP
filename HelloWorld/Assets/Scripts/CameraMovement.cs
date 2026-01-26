@@ -14,6 +14,6 @@ public class CameraMovement : MonoBehaviour
     // LateUpdate is called once per frame after all Update methods have been called
     void LateUpdate()
     {
-        transform.position = new Vector3(joueur.transform.position.x, 20, joueur.transform.position.z );
+        transform.position = new Vector3(joueur.transform.position.x, 5, joueur.transform.position.z );
     }
 }
