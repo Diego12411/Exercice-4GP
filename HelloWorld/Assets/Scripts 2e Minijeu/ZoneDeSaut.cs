@@ -19,7 +19,6 @@ public class ZoneDeSaut : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        rb.AddForce(0f, 500f, 0f);
-        Debug.Log(joueur);
+        rb.AddForce(0f, 700f, 0f);
     }
 }
