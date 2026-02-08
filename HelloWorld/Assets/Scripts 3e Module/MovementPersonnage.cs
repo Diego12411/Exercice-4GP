@@ -10,15 +10,18 @@ public class MovementPersonnage : MonoBehaviour
     private Vector3 direction;
     private Vector3 objectif;
     private Quaternion rotationFinale;
+    private bool peutBouger;
     void Start()
     {
+        peutBouger = true;
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        if (Mouse.current.leftButton.wasPressedThisFrame) {
+        if (Mouse.current.leftButton.wasPressedThisFrame && peutBouger) {
+            peutBouger = false;
             Vector2 mousePosition = Mouse.current.position.ReadValue();
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -39,6 +42,7 @@ public class MovementPersonnage : MonoBehaviour
             yield return null;
         }
         StopCoroutine(DeplacerPersonnage(direction));
+        peutBouger = true;
     }
 
         IEnumerator RotaterPersonnage(Quaternion rotationFinale)
