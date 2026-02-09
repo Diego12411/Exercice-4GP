@@ -11,9 +11,11 @@ public class MovementPersonnage : MonoBehaviour
     private Vector3 objectif;
     private Quaternion rotationFinale;
     private bool peutBouger;
+    private Rigidbody rb;
     void Start()
     {
         peutBouger = true;
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -26,7 +28,7 @@ public class MovementPersonnage : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Vector3 direction = (hit.point - transform.position).normalized;
+                Vector3 direction = (hit.point - rb.position).normalized;
                 objectif = hit.point;
                 rotationFinale = Quaternion.LookRotation(direction);
                 Coroutine coDeplace = StartCoroutine(DeplacerPersonnage(direction));
@@ -36,9 +38,9 @@ public class MovementPersonnage : MonoBehaviour
 
     }
         IEnumerator DeplacerPersonnage(Vector3 direction) {
-        while ((transform.position - objectif).magnitude > 0.5f)
+        while ((rb.position - objectif).magnitude > 0.5f)
         {
-            transform.position += Time.deltaTime * direction;
+            rb.position += Time.deltaTime * direction;
             yield return null;
         }
         StopCoroutine(DeplacerPersonnage(direction));
@@ -47,12 +49,18 @@ public class MovementPersonnage : MonoBehaviour
 
         IEnumerator RotaterPersonnage(Quaternion rotationFinale)
     {
-        while (transform.rotation != rotationFinale)
+        while (rb.rotation != rotationFinale)
         {
             var rotate = 50 * Time.deltaTime;
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationFinale, rotate);
+            rb.rotation = Quaternion.RotateTowards(rb.rotation, rotationFinale, rotate);
             yield return null;
         }
         StopCoroutine(RotaterPersonnage(rotationFinale));
     }
- }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        StopAllCoroutines();
+        peutBouger = true;
+    }
+}
