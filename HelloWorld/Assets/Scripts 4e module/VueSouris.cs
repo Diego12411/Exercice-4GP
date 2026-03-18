@@ -24,7 +24,7 @@ public class VueSouris : MonoBehaviour
     {
         Vector2 inputSouris = look.ReadValue<Vector2>();
         rotationPlayer = new Vector3(0, inputSouris.x, 0) * Time.deltaTime * forceRotation;
-        rotationCamera = new Vector3(inputSouris.y, 0, 0) * Time.deltaTime * forceRotation;
+        rotationCamera = new Vector3(-inputSouris.y, 0, 0) * Time.deltaTime * forceRotation;
         player.transform.Rotate(rotationPlayer);
 
         if (rotationActuelleCamera <= 30 && rotationActuelleCamera >= -30)
