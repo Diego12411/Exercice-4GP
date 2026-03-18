@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.CharacterController;
@@ -11,7 +10,7 @@ public class MouvementJoueur : MonoBehaviour
     private InputAction sprint;
     private InputAction jump;
     private CharacterController cc;
-    private int force = 1;
+    private int force = -1;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
