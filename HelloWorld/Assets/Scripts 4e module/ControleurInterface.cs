@@ -1,5 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Runtime.CompilerServices;
+using System;
+
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -21,4 +25,17 @@ public class ControleurInterface : MonoBehaviour
     {
         SceneManager.LoadScene("Labyrinthe");
     }
+
+public void LireVitesse(string valeur)
+{
+    if (float.TryParse(valeur, out float v))
+        SingletonValeurs.Instance.vitesse = v;
+        Debug.Log(valeur);
+}
+public void LireAcceleration(string valeur)
+{
+    if (float.TryParse(valeur, out float a))
+        SingletonValeurs.Instance.acceleration = a;
+        Debug.Log(valeur);
+}
 }

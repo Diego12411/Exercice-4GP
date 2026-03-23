@@ -10,7 +10,8 @@ public class MouvementJoueur : MonoBehaviour
     private InputAction sprint;
     private InputAction jump;
     private CharacterController cc;
-    private int force = -1;
+    private float vitesseActuelle = -SingletonValeurs.Instance.vitesse;
+    private float accelerationActuelle = SingletonValeurs.Instance.acceleration;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -23,15 +24,16 @@ public class MouvementJoueur : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(vitesseActuelle);
         velociteY += Physics.gravity.y * Time.deltaTime;
 
         if (sprint.IsPressed())
         {
-            force = 2;
+            vitesseActuelle = -accelerationActuelle;
             Debug.Log("sprint");
         } else if (!sprint.IsPressed())
         {
-            force = 1;
+            vitesseActuelle = -SingletonValeurs.Instance.vitesse;
         }
 
         if (jump.IsPressed() && cc.isGrounded)
@@ -43,7 +45,7 @@ public class MouvementJoueur : MonoBehaviour
         Vector2 inputMove = move.ReadValue<Vector2>();
         Vector3 movement = new Vector3(inputMove.x, 0, inputMove.y);
 
-        Vector3 direction = transform.TransformDirection(movement * force * Time.deltaTime);
+        Vector3 direction = transform.TransformDirection(movement * vitesseActuelle * Time.deltaTime);
         Vector3 playerMovementMoveJump = new Vector3(direction.x, velociteY * Time.deltaTime, direction.z);
         cc.Move(playerMovementMoveJump);
 
