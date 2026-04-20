@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -8,54 +9,37 @@ public class playerInputHandler : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+    [SerializeField] private GameObject[] TableauPointsPatrouille;
     Animator animator;
-    private Vector3 direction;
-    private Vector3 objectif;
-    private Quaternion rotationFinale;
     private bool peutBouger;
-    private Rigidbody rb;
+    private Vector3 cible;
     NavMeshAgent myNavMeshAgent;
     void Start()
     {
         animator = GetComponent<Animator>();
         peutBouger = true;
-        rb = GetComponent<Rigidbody>();
         myNavMeshAgent = GetComponent<NavMeshAgent>();
+        cible = TableauPointsPatrouille[Random.Range(0,4)].transform.position;
+        myNavMeshAgent.SetDestination(cible);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Keyboard.current.aKey.wasPressedThisFrame)
-        {
-            animator.SetTrigger("Attack");
-        }
-
-
-        if (Mouse.current.leftButton.wasPressedThisFrame && peutBouger)
+        if (!myNavMeshAgent.pathPending) // 1. Attendre que le chemin soit calculï¿½
         {
             animator.SetBool("Walk", true);
-            peutBouger = false;
-            Vector2 mousePosition = Mouse.current.position.ReadValue();
-            Ray ray = Camera.main.ScreenPointToRay(mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (myNavMeshAgent.remainingDistance <= myNavMeshAgent.stoppingDistance) // 2. Vï¿½rifier la distance restante
             {
-                Vector3 direction = (hit.point - rb.position).normalized;
-                objectif = hit.point;
-                myNavMeshAgent.SetDestination(objectif);
-            }
-        }
-
-        if (!myNavMeshAgent.pathPending) // 1. Attendre que le chemin soit calculé
-        {
-            if (myNavMeshAgent.remainingDistance <= myNavMeshAgent.stoppingDistance) // 2. Vérifier la distance restante
-            {
-                if (!myNavMeshAgent.hasPath || myNavMeshAgent.velocity.sqrMagnitude == 0f) // 3. Confirmer l'arrêt
+                if (!myNavMeshAgent.hasPath || myNavMeshAgent.velocity.sqrMagnitude == 0f) // 3. Confirmer l'arrï¿½t
                 {
-                    Debug.Log("L'agent est arrivé à destination sur la surface.");
+                    Debug.Log("L'agent est arrive a destination sur la surface.");
                     peutBouger = true;
                     animator.SetBool("Walk", false);
                     Debug.Log("Destination atteinte !");
+                    cible = TableauPointsPatrouille[Random.Range(0,4)].transform.position;
+        myNavMeshAgent.SetDestination(cible);
                 }
             }
         }

@@ -11,6 +11,7 @@ public class MouvementJoueur : MonoBehaviour
     private InputAction jump;
     private CharacterController cc;
     private float vitesseActuelle = -SingletonValeurs.Instance.vitesse;
+    private Vector3 positionDepart;
     private float accelerationActuelle = SingletonValeurs.Instance.acceleration;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,6 +20,7 @@ public class MouvementJoueur : MonoBehaviour
         move = InputSystem.actions.FindAction("Move");
         sprint = InputSystem.actions.FindAction("Sprint");
         cc = GetComponent<CharacterController>();
+        positionDepart = transform.position;
     }
 
     // Update is called once per frame
@@ -29,11 +31,11 @@ public class MouvementJoueur : MonoBehaviour
 
         if (sprint.IsPressed())
         {
-            vitesseActuelle = -accelerationActuelle;
+            vitesseActuelle = accelerationActuelle;
             Debug.Log("sprint");
         } else if (!sprint.IsPressed())
         {
-            vitesseActuelle = -SingletonValeurs.Instance.vitesse;
+            vitesseActuelle = SingletonValeurs.Instance.vitesse;
         }
 
         if (jump.IsPressed() && cc.isGrounded)
@@ -52,6 +54,15 @@ public class MouvementJoueur : MonoBehaviour
         if (cc.isGrounded)
         {
             velociteY = 0;
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Monster"))
+        {
+            transform.position = positionDepart;
+            Debug.Log("Touche");
         }
     }
 }
