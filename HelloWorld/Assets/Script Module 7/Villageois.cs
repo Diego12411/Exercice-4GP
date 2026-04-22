@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,11 +23,39 @@ public class Villageois : MonoBehaviour
     private NavMeshAgent navMeshAgent;
     private StrategieChoixRessource strategieChoix;
     public List<Ressource> ressources;
+    private int strategieActuelle = 1;
+    private EtatJeu donnes;
+    private string json;
+    private string fichierSauvegarde;
 
     private void Start()
     {
+        string emplacement = Application.persistentDataPath;
+        fichierSauvegarde = emplacement + "/donnees-jeu.json";
+
+        string texte = File.ReadAllText(fichierSauvegarde);
+        donnes = JsonUtility.FromJson<EtatJeu>(texte);
+
+        or = donnes.orCollecte;
+        plantes = donnes.plantesCollecte;
+        roches = donnes.rochesCollecte;
+
+        MiseAJourTextes();
+
         navMeshAgent = GetComponent<NavMeshAgent>();
-        strategieChoix = new StrategieHasard();
+
+        if (PlayerPrefs.GetInt("strategie", strategieActuelle) == (int)TypeStrategie.Hasard)
+        {
+            strategieChoix = new StrategieHasard();
+        }
+        else if (PlayerPrefs.GetInt("strategie", strategieActuelle) == (int)TypeStrategie.Equilibre)
+        {
+            strategieChoix = new StrategieProche(transform);
+        }
+        else if (PlayerPrefs.GetInt("strategie", strategieActuelle) == (int)TypeStrategie.Proche)
+        {
+            strategieChoix = new StrategieEquilibre(transform);
+        }
     }
 
     private void Update()
@@ -60,7 +89,7 @@ public class Villageois : MonoBehaviour
 
     private void AllerVersProchaineRessource()
     {
-         ressources = GameManager.Instance.ressources;
+        ressources = GameManager.Instance.ressources;
 
         if (ressources.Count == 0)
         {
@@ -74,8 +103,6 @@ public class Villageois : MonoBehaviour
             navMeshAgent.SetDestination(ressource.transform.position);
         }
     }
-
-    // TODO : Cette fonction devrait faire partie d'une des classes de votre patron Strat�gie au lieu de faire partie du villageois
     private int ChoisirRessource(List<Ressource> ressources)
     {
         return strategieChoix.execute(ressources);
@@ -86,6 +113,7 @@ public class Villageois : MonoBehaviour
     {
         StrategieHasard strategieHasard = new StrategieHasard();
         strategieChoix = strategieHasard;
+        strategieActuelle = 1;
     }
 
     public void setStrategieProche()
@@ -93,11 +121,24 @@ public class Villageois : MonoBehaviour
         StrategieProche strategieProche = new StrategieProche(transform);
 
         strategieChoix = strategieProche;
+        strategieActuelle = 2;
     }
 
     public void setStrategieEquilibre()
     {
         StrategieEquilibre strategieEquilibre = new StrategieEquilibre(transform);
         strategieChoix = strategieEquilibre;
+        strategieActuelle = 3;
     }
+    private void OnApplicationQuit()
+    {
+        EtatJeu donnes = new EtatJeu();
+        PlayerPrefs.SetInt("strategie", strategieActuelle);
+        donnes.plantesCollecte = plantes;
+        donnes.orCollecte = or;
+        donnes.rochesCollecte = roches;
+        json = JsonUtility.ToJson(donnes);
+        File.WriteAllText(fichierSauvegarde, json);
+    }
+
 }

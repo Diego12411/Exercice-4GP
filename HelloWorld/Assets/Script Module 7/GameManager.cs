@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -49,4 +50,13 @@ public class GameManager : MonoBehaviour
         Destroy(ressource.gameObject);
         ressources.Remove(ressource);
     }
+}
+
+[Serializable]
+public class EtatJeu
+{
+    public int orCollecte;
+    public int plantesCollecte;
+    public int rochesCollecte;
+    public int ressourcesRestantes;
 }
